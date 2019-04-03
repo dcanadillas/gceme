@@ -51,7 +51,10 @@ spec:
     stage('Build and push image with Container Builder') {
       steps {
         container('gcloud') {
-          sh "PYTHONUNBUFFERED=1 gcloud builds submit -t ${imageTag} ."
+          withCredentials([file(credentialsId: 'google-cloud', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+           sh 'gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS --project=emea-sa-demo'            
+           sh "PYTHONUNBUFFERED=1 gcloud builds submit -t ${imageTag} ."
+          }
         }
       }
     }
